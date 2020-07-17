@@ -1,6 +1,7 @@
 <template>
   <div class="home_box">
     <el-container>
+      <!-- 顶部区域 -->
       <el-header>
         <div class="home_title">
           <img src="../assets/logo.png">
@@ -9,12 +10,12 @@
         <el-button type='info' @click="quit">退出</el-button>
       </el-header>
       <el-container>
-
+        <!-- 左侧菜单栏区域 -->
         <el-aside :width="isCollapse?'64px':'200px'">
           <div class='aside_fold' @click="dji">|||</div>
-          <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
+          <el-menu :default-active="index" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
             background-color="#333845" text-color="#fff" active-text-color="#409EFF" unique-opened :collapse="isCollapse"
-            :collapse-transition="false">
+            :collapse-transition="false" router >
             <!-- 一级菜单-->
             <!-- :index="n.id+''"因为v-on只接受字符串 -->
             <el-submenu :index="n.id+''" v-for="n in menuList" :key='n.id'>
@@ -23,7 +24,7 @@
                 <span>{{n.authName}}</span>
               </template>
               <!-- 一级子菜单 -->
-              <el-menu-item :index="m.id+''" v-for="m in n.children" :key='m.id'>
+              <el-menu-item :index="'/'+m.path" v-for="m in n.children" :key='m.id' @click='highlight(m.path)'>
                 <template slot="title">
                   <i class="el-icon-menu"></i>
                   <span>{{m.authName}}</span>
@@ -33,8 +34,10 @@
 
           </el-menu>
         </el-aside>
-
-        <el-main>Main</el-main>
+        <!-- 主体区域 -->
+        <el-main>
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -53,7 +56,8 @@
           '102': 'el-icon-s-order',
           '145': 'el-icon-s-marketing'
         },
-        isCollapse: false
+        isCollapse: false,
+        index:''
       }
     },
     methods: {
@@ -78,10 +82,17 @@
       },
       dji() {
         this.isCollapse = !this.isCollapse
+      },
+      highlight(path){
+        window.sessionStorage.setItem('index','/'+path)
       }
     },
     created() {
       this.show()
+      if(window.sessionStorage.getItem('index')){
+        this.index=window.sessionStorage.getItem('index')
+      }
+
     }
   }
 </script>
