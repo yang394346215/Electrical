@@ -11,6 +11,13 @@ Vue.use(ElementUI);
 import './assets/css/index.css'
 //导入axios
 import axios from 'axios'
+//请求拦截器，每次通过axios访问时会先通过这里
+axios.interceptors.request.use(config=>{
+  //给请求头一个authorization属性配置token，后端需要授权api
+  config.headers.authorization = window.sessionStorage.getItem('token')
+  //必须return一个config出去
+  return config
+})
 Vue.prototype.$axios = axios
 
 

@@ -61,7 +61,7 @@
               console.log(res.data)
               if(res.data.meta.status === 200){
                 this.$message.success('登录成功')
-                //
+                //用sessionStorage来保存用户登录返回的传过来的token
                 window.sessionStorage.setItem('token',res.data.data.token)
                 this.$router.push('/home')
               }else{
