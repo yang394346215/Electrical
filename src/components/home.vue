@@ -11,11 +11,11 @@
       </el-header>
       <el-container>
         <!-- 左侧菜单栏区域 -->
-        <el-aside :width="isCollapse?'64px':'200px'">
+        <el-aside style="width: auto;">
           <div class='aside_fold' @click="dji">|||</div>
           <el-menu :default-active="index" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose"
             background-color="#333845" text-color="#fff" active-text-color="#409EFF" unique-opened :collapse="isCollapse"
-            :collapse-transition="false" router >
+             router >
             <!-- 一级菜单-->
             <!-- :index="n.id+''"因为v-on只接受字符串 -->
             <el-submenu :index="n.id+''" v-for="n in menuList" :key='n.id'>

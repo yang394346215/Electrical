@@ -12,12 +12,12 @@
       <!-- el-row 用element-ui的Layout布局 gutter间隔 span宽度-->
       <el-row :gutter="20">
         <el-col :span="7">
-          <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+          <el-input placeholder="请输入内容" v-model="query" class="input-with-select" clearable>
+            <el-button slot="append" icon="el-icon-search" @click="show"></el-button>
           </el-input>
         </el-col>
         <el-col :span="4">
-          <el-button type="primary" :span="3">添加用户</el-button>
+          <el-button type="primary" :span="3" @click="dialogVisible=true">添加用户</el-button>
         </el-col>
       </el-row>
       <!-- 主体表单 -->
@@ -57,28 +57,91 @@
         </el-table-column>
       </el-table>
       <!-- 分页 -->
-
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="pagenum"
         :page-sizes="[1,2,3,4,5]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="total"
         style="margin-top: 15px;">
       </el-pagination>
-
     </el-card>
 
 
+    <!-- 添加用户对话框 -->
+    <el-dialog title="添加用户" :visible.sync="dialogVisible" width="30%" @close='areset'>
+
+
+      <el-form :model="adduser" :rules="rules" ref="ruleForm"  class="demo-ruleForm">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="adduser.username"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password">
+          <el-input v-model="adduser.password"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="adduser.email"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号" prop="mobile">
+          <el-input v-model="adduser.mobile"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addusers">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   export default {
     data() {
+      //制定邮箱的规则
+      var ruleemail = (rule, value, callback) =>{
+        const aemail = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+        if(aemail.test(value)){
+          callback()
+        }else{
+          callback(new Error('请输入合法的邮箱'))
+        }
+
+      }
+      //制定手机的规则
+      var ruleephone = (rule, value, callback) =>{
+        const aphone = /^1[3456789]\d{9}$/
+        if(aphone.test(value)){
+          callback()
+        }else{
+          callback(new Error('请输入合法的手机号'))
+        }
+      }
       return {
-        input3: '',
         tableData: [],
         query: '',
         pagenum: 1,
-        pagesize: 2,
-        total: 0
+        pagesize: 1,
+        total: 0,
+        //控制添加用户对话框开关
+        dialogVisible: false,
+        adduser:{
+          username:'',
+          password:'',
+          email:'',
+          mobile:''
+        },
+        rules:{
+          username:[
+             { required: true, message: '请输入用户名', trigger: 'blur' },
+             { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          password:[
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          ],
+          email:[
+             { validator: ruleemail, trigger: 'blur' }
+          ],
+          mobile:[
+             { validator: ruleephone, trigger: 'blur' }
+          ]
+        }
       }
     },
     methods: {
@@ -129,8 +192,28 @@
             this.$message.error(res.data.meta.msg);
           }
         })
+      },
+      areset(){
+        this.$refs.ruleForm.resetFields()
+      },
+      addusers(){
+        this.$refs.ruleForm.validate(vail=>{
+          if(vail){
+            this.$axios.post('http://127.0.0.1:8888/api/private/v1/users',this.adduser).then(res=>{
+              console.log(res.data)
+              if(res.data.meta.status===201){
+                this.$message.success(res.data.meta.msg)
+                this.show()
+                this.dialogVisible=false
+              }else{
+                this.$message.error(res.data.meta.msg)
+              }
+            })
+          }
+        })
       }
     },
+
     created() {
       this.show()
     }

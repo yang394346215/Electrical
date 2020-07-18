@@ -1,11 +1,17 @@
 <template>
-    <div>
-      <h1>角色列表</h1>
-    </div>
+  <div>
+
+  </div>
 </template>
 
 <script>
+  export default {
+    data: () => ({
+      show3: ''
+    })
+  }
 </script>
 
-<style>
+<style scoped>
+
 </style>
