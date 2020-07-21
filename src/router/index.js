@@ -15,6 +15,12 @@ import users from '../components/commain/users.vue'
 import roles from '../components/commain/roles.vue'
 import rights from '../components/commain/rights.vue'
 
+import categories from '../components/commain/commodity/categories.vue'
+import goods from '../components/commain/commodity/goods.vue'
+import params from '../components/commain/commodity/params.vue'
+import reports from '../components/commain/reports.vue'
+import orders from '../components/commain/orders.vue'
+
 const router = new Router({
   routes: [
     {path: '/',redirect: '/login'},
@@ -27,7 +33,12 @@ const router = new Router({
         {path: '/commain',component: commain},
         {path: '/users',component: users},
         {path: '/roles',component: roles},
-        {path: '/rights',component: rights}
+        {path: '/rights',component: rights},
+        {path: '/categories',component: categories},
+        {path: '/goods',component: goods},
+        {path: '/params',component: params},
+        {path: '/reports',component: reports},
+        {path: '/orders',component: orders}
       ]
     }
   ]
