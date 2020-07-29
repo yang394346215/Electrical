@@ -11,5 +11,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+  #app{
+    min-width: 1366px;
+  }
 </style>

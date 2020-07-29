@@ -9,11 +9,35 @@
       <el-button type="primary" @click='addrolesboo = true'>添加角色</el-button>
 
       <el-table :data="rolesList" border style="width: 100%;margin-top: 20px;">
+        <!-- 展开菜单 -->
+        <el-table-column type='expand'>
+          <template slot-scope="scope">
+            <el-row v-for="(n,index) in scope.row.children" :key="n.id" :class="['onerow',index===0?'onerow1':'']">
+              <el-col :span="6">
+                <el-tag closable @close='removeroles(scope.row,n.id)'>{{n.authName}}</el-tag>
+                <i class="el-icon-caret-right"></i>
+              </el-col>
+              <el-col :span="18">
+                <el-row v-for="(n1,index) in n.children" :key="n1.id" :class="[index===0?'':'tworow']">
+                  <el-col :span="8">
+                    <el-tag closable type="success" @close='removeroles(scope.row,n1.id)'>{{n1.authName}}</el-tag>
+                    <i class="el-icon-caret-right"></i>
+                  </el-col>
+                  <el-col :span="16">
+                    <el-tag closable  @close='removeroles(scope.row,n2.id)' type="warning" v-for="n2 in n1.children" :key="n2.id">{{n2.authName}}</el-tag>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+            <pre>{{scope.row}}</pre>
+
+          </template>
+        </el-table-column>
         <el-table-column type='index'>
         </el-table-column>
-        <el-table-column prop="roleName" label="角色名" width="180">
+        <el-table-column prop="roleName" label="角色名" width="250">
         </el-table-column>
-        <el-table-column prop="roleDesc" label="角色描述" width="180">
+        <el-table-column prop="roleDesc" label="角色描述" width="250">
         </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -125,6 +149,17 @@
           }
         })
       },
+      removeroles(role,authid){
+        this.$axios.delete(`http://127.0.0.1:8888/api/private/v1/roles/${role.id}/rights/${authid}`).then(res=>{
+          if(res.data.meta.status===200){
+            this.$message.success(res.data.meta.msg)
+            role.children = res.data.data
+          }else{
+            this.$message.error(res.data.meta.msg)
+          }
+          
+        })
+      },
       deletefun() {
         this.$axios.delete('http://127.0.0.1:8888/api/private/v1/roles/' + this.delid).then(res => {
           this.deldialogrole = false
@@ -196,6 +231,22 @@
   }
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
+  .el-tag{
+    margin: 7px;
 
+  }
+  .onerow{
+    border-bottom: 1px solid #eee;
+  }
+  .onerow1{
+    border-top: 1px solid #eee;
+  }
+  .tworow{
+    border-top: 1px solid #eee;
+  }
+  .el-row{
+    display:flex;
+    align-items: center;
+  }
 </style>
